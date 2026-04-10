@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>While she was sleeping... 😴</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      opacity: 0.7;
+      font-size: 14px;
+    }
+
+    .slots {
+      display: flex;
+      gap: 10px;
+      margin: 25px 0;
+    }
+
+    .slot {
+      width: 100px;
+      height: 70px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+      padding: 6px;
+      transition: transform 0.2s;
+    }
+
+    .slot.spin {
+      animation: bounce 0.3s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(-3px); }
+      to { transform: translateY(3px); }
+    }
+
+    button {
+      padding: 14px 22px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      margin: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .spin { background: #ff4d6d; color: white; }
+    .again { background: rgba(255,255,255,0.1); color: white; }
+
+    .result {
+      margin-top: 15px;
+      font-size: 14px;
+      line-height: 1.5;
+      animation: fadeIn 0.6s ease;
+    }
+
+    img {
+      max-width: 95%;
+      border-radius: 18px;
+      margin-top: 15px;
+      display: none;
+      animation: pop 0.4s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .prediction {
+      margin-top: 25px;
+      font-size: 13px;
+      opacity: 0.75;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>While she was sleeping... 😴</h1>
+  <div class="subtitle">Strategic nap prediction system</div>
+
+  <div class="slots">
+    <div class="slot" id="slot1">???</div>
+    <div class="slot" id="slot2">???</div>
+    <div class="slot" id="slot3">???</div>
+  </div>
+
+  <button class="spin" onclick="spin()">SLEEP</button>
+  <button class="again" onclick="spin()">Sleep again</button>
+
+  <div class="result" id="result"></div>
+  <img id="photo" />
+
+  <div class="prediction" id="prediction"></div>
+
+  <script>
+    const data = [
+      { place: "COUCH", pose: "SIDE COLLAPSE", time: "NIGHT", img: "img/1.jpg", comment: "The couch claims another victim." },
+      { place: "GARDEN", pose: "CHAIR DEFEAT", time: "DAY", img: "img/2.jpg", comment: "Nature failed to save her." },
+      { place: "CHAIR", pose: "CHAIR DEFEAT", time: "NIGHT", img: "img/3.jpg", comment: "Avoiding responsibilities." },
+      { place: "PUBLIC TRANSPORT", pose: "DRINKING", time: "NIGHT", img: "img/4.jpg", comment: "Finally, the intended habitat." },
+      { place: "SOFA", pose: "SIDE COLLAPSE", time: "NIGHT", img: "img/5.jpg", comment: "Sleep well, sensei." },
+      { place: "GARDEN", pose: "CHAIR DEFEAT", time: "DAY", img: "img/6.jpg", comment: "Nature failed to save her." },
+      { place: "CHAIR", pose: "CHAIR DEFEAT", time: "NIGHT", img: "img/7.jpg", comment: "Avoiding responsibilities." },
+      { place: "COUCH", pose: "BURRITO WRAP", time: "NIGHT", img: "img/8.jpg", comment: "The couch claims another victim." },
+      { place: "COUCH", pose: "BURRITO WRAP", time: "NIGHT", img: "img/9.jpg", comment: "The couch claims another victim." },
+      { place: "COUCH", pose: "BURRITO WRAP", time: "NIGHT", img: "img/10.jpg", comment: "The couch claims another victim." },
+      { place: "CHAIR", pose: "CHAIR DEFEAT", time: "NIGHT", img: "img/11.jpg", comment: "Avoiding responsibilities." }
+      
+    ];
+
+    const slot1 = document.getElementById("slot1");
+    const slot2 = document.getElementById("slot2");
+    const slot3 = document.getElementById("slot3");
+    const resultText = document.getElementById("result");
+    const photo = document.getElementById("photo");
+
+    function randomItem(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function spin() {
+      const chosen = randomItem(data);
+
+      photo.style.display = "none";
+      resultText.innerHTML = "Analyzing sleep patterns...";
+
+      slot1.classList.add("spin");
+      slot2.classList.add("spin");
+      slot3.classList.add("spin");
+
+      let cycles = 0;
+
+      const interval = setInterval(() => {
+        slot1.innerText = randomItem(data).place;
+        slot2.innerText = randomItem(data).pose;
+        slot3.innerText = randomItem(data).time;
+
+        cycles++;
+
+        if (cycles > 15) {
+          clearInterval(interval);
+
+          slot1.classList.remove("spin");
+          setTimeout(() => slot1.innerText = chosen.place, 200);
+
+          setTimeout(() => {
+            slot2.classList.remove("spin");
+            slot2.innerText = chosen.pose;
+          }, 400);
+
+          setTimeout(() => {
+            slot3.classList.remove("spin");
+            slot3.innerText = chosen.time;
+
+            resultText.innerHTML = `\n              <strong>${chosen.place} + ${chosen.pose} + ${chosen.time}</strong><br>
+              ${chosen.comment}<br>
+              Probability: ${(Math.random()*100).toFixed(1)}%
+            `;
+
+            photo.src = chosen.img;
+            photo.style.display = "block";
+          }, 650);
+        }
+      }, 80);
+    }
+
+    function dailyPrediction() {
+      const today = new Date().getDate();
+      const pick = data[today % data.length];
+
+      document.getElementById("prediction").innerText =
+        `Today's prediction: ${pick.place} + ${pick.pose} + ${pick.time}`;
+    }
+
+    dailyPrediction();
+  </script>
+
+</body>
+</html>
