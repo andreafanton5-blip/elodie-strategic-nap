@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>While she was sleeping... 😴</title>
 
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
@@ -23,17 +22,11 @@
       min-height: 100vh;
       padding: 20px;
       text-align: center;
+      overflow-x: hidden;
     }
 
-    h1 {
-      font-weight: 800;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      opacity: 0.7;
-      font-size: 14px;
-    }
+    h1 { font-weight: 800; margin-bottom: 5px; }
+    .subtitle { opacity: 0.7; font-size: 14px; }
 
     .slots {
       display: flex;
@@ -76,12 +69,12 @@
       transition: transform 0.15s, opacity 0.2s;
     }
 
-    button:active {
-      transform: scale(0.95);
-    }
+    button:active { transform: scale(0.95); }
+    button:hover { transform: scale(1.05); opacity: 0.9; }
 
     .spin { background: #ff4d6d; color: white; }
     .again { background: rgba(255,255,255,0.1); color: white; }
+    .auto { background: #ffd166; color: black; }
 
     .result {
       margin-top: 15px;
@@ -128,7 +121,8 @@
   </div>
 
   <button class="spin" onclick="spin()">SLEEP</button>
-  <button class="again" onclick="spin()">Sleep again</button>
+  <button class="again" onclick="spin()">Try (and sleep) again</button>
+  <button class="auto" onclick="toggleAuto()">She never stops sleeping</button>
 
   <div class="result" id="result"></div>
   <img id="photo" />
@@ -148,7 +142,6 @@
       { place: "COUCH", pose: "BURRITO WRAP", time: "NIGHT", img: "img/9.jpg", comment: "The couch claims another victim." },
       { place: "COUCH", pose: "BURRITO WRAP", time: "NIGHT", img: "img/10.jpg", comment: "The couch claims another victim." },
       { place: "CHAIR", pose: "CHAIR DEFEAT", time: "NIGHT", img: "img/11.jpg", comment: "Avoiding responsibilities." }
-      
     ];
 
     const slot1 = document.getElementById("slot1");
@@ -161,7 +154,12 @@
       return arr[Math.floor(Math.random() * arr.length)];
     }
 
+    let spinning = false;
+
     function spin() {
+      if (spinning) return;
+      spinning = true;
+
       const chosen = randomItem(data);
 
       photo.style.display = "none";
@@ -195,16 +193,45 @@
             slot3.classList.remove("spin");
             slot3.innerText = chosen.time;
 
-            resultText.innerHTML = `\n              <strong>${chosen.place} + ${chosen.pose} + ${chosen.time}</strong><br>
+            resultText.innerHTML = `
+              <strong>${chosen.place} + ${chosen.pose} + ${chosen.time}</strong><br>
               ${chosen.comment}<br>
               Probability: ${(Math.random()*100).toFixed(1)}%
             `;
 
             photo.src = chosen.img;
             photo.style.display = "block";
+
+            spinning = false;
           }, 650);
         }
       }, 80);
+    }
+
+    // SWIPE TO SPIN
+    let startY = 0;
+
+    document.addEventListener("touchstart", e => {
+      startY = e.touches[0].clientY;
+    });
+
+    document.addEventListener("touchend", e => {
+      let endY = e.changedTouches[0].clientY;
+      if (endY - startY > 80) spin();
+    });
+
+    // AUTO SPIN MODE
+    let auto = false;
+
+    function toggleAuto() {
+      auto = !auto;
+      if (auto) loop();
+    }
+
+    function loop() {
+      if (!auto) return;
+      spin();
+      setTimeout(loop, 2000);
     }
 
     function dailyPrediction() {
